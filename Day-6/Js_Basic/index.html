@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Closure</title>
+</head>
+<body style="background-color: #212121;">
+    <button id="orange">Oreange</button>
+    <button id="green">Green</button>
+</body>
+ <!-- <script>
+    // function init(){
+    //     let name = "Mozilla"
+
+    //     function displayname(){
+    //         console.log(`${name}`); 
+    //     }
+
+    //     displayname();
+    // }
+
+    // init()
+
+    // function outter(){
+    //     let number = 123;
+
+    //     function innerOne(){
+    //         let sceretNum = 223340
+            
+    //         console.log(number);
+            
+    //     }
+
+    //     function innerTwo(){
+    //         console.log("onnerOne", sceretNum);
+    //     } 
+
+    //     //! function innerOne and Also The innerTwo Can not Shere The VAlues Bcuz Of The Lexsical Scoping Can Not Shrer THe Values Inside The Function But Outtter Fucation Can Shere The values Of Both Of The Fucation
+    //     innerOne()
+    //     innerTwo()
+    // }
+
+    // outter()
+
+
+ </script> -->
+
+ <script>
+    // document.getElementById("orange").onclick = function(){
+    //     document.body.style.backgroundColor = 'orange'
+    // }
+
+    // document.getElementById("green").onclick = function(){
+    //     document.body.style.backgroundColor = 'green'
+    // }
+
+    function clickhandler(color){
+        return function(){
+            document.body.style.backgroundColor = `${color}`
+        }
+    }
+
+    document.getElementById("orange").onclick = clickhandler("orange")
+    document.getElementById("green").onclick = clickhandler("green")
+ </script>
+</html>

@@ -21,9 +21,13 @@ async function wheelSpin() {
             let count = 0;
 
             function spin() {
-                randomNumber = Math.floor(Math.random() * 10) + 1;
-                console.log("Random Number:", randomNumber);
-                randomNumStore.push(randomNumber);
+                while (randomNumStore.length < 10) {
+                    randomNumber = Math.floor(Math.random() * 10) + 1;
+                    if (!randomNumStore.includes(randomNumber)) {
+                        randomNumStore.push(randomNumber);
+                        console.log("Random Number:", randomNumber);
+                    }
+                }
                 count++;
 
                 if (count < spins) {

@@ -12,7 +12,8 @@ async function wheelSpin() {
      
     return new Promise (async (resolve) => {
         const GueesNum = await new Promise(resolve =>  rl.question("Guess a Number Between 1 To 10 : ", resolve))
-        if(GueesNum){
+        
+        if(  GueesNum <= 10 && GueesNum >= 1  ){
             let randomNumStore = [];
             let randomNumber;
 
@@ -42,13 +43,14 @@ async function wheelSpin() {
                     resolve()
                 }
             }
-
-
             console.log("Spinning...");
             spin();
         } else {
             console.log("please Enter The Number, After I Can Spin!..");
-            console.log("history :" ,history);
+            history.forEach( (index, val) => {
+                console.log(`${index} : ${val} `);
+                val++;
+            } )
             rl.close();
         }
     })
@@ -59,7 +61,10 @@ async function playGame(){
     for(let i=0; i < round; i++){
         await wheelSpin();
     }
-    console.log(history);   
+    history.forEach( (index, val) => {
+                console.log(`${val} : ${index} `);
+                val++;
+            } )  
     rl.close();
 
 }

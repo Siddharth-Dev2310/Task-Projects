@@ -57,15 +57,21 @@ async function wheelSpin() {
 }
 
 async function playGame(){
-    let round = 5;
-    for(let i=0; i < round; i++){
-        await wheelSpin();
-    }
-    history.forEach( (index, val) => {
-                console.log(`${val} : ${index} `);
-                val++;
-            } )  
-    rl.close();
+    let userInput = await new Promise( (resolve) => rl.question("Do You want To play Game (yes/No):" , resolve))
 
+        let count = 0;
+        if(userInput == "yes"){
+                await wheelSpin();
+                history.forEach( (index, val) => {
+                    console.log(`${val} : ${index} `);
+                        val++;
+                }) 
+                count++;
+                await playGame();
+            rl.close();
+        } else {
+            console.log("can not play");
+            rl.close();
+        }
 }
 playGame();

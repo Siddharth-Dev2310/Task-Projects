@@ -1,0 +1,47 @@
+[
+  {
+    "_id": "689c5122fe458d6a7d008376",
+    "name": "Siddharth",
+    "age": 19,
+    "course": "B.tech",
+    "createdAt": "2025-08-13T08:47:30.905Z",
+    "updatedAt": "2025-08-13T08:47:30.905Z",
+    "__v": 0
+  },
+  {
+    "_id": "689c513dfe458d6a7d00837a",
+    "name": "hitesh",
+    "age": 20,
+    "course": "M.tech",
+    "createdAt": "2025-08-13T08:47:57.231Z",
+    "updatedAt": "2025-08-13T08:47:57.231Z",
+    "__v": 0
+  },
+  {
+    "_id": "689c5152fe458d6a7d00837f",
+    "name": "mahesh",
+    "age": 10,
+    "course": "6th",
+    "createdAt": "2025-08-13T08:48:18.243Z",
+    "updatedAt": "2025-08-13T08:48:18.243Z",
+    "__v": 0
+  },
+  {
+    "_id": "689c5161fe458d6a7d008383",
+    "name": "rakesh",
+    "age": 22,
+    "course": "MCA",
+    "createdAt": "2025-08-13T08:48:33.478Z",
+    "updatedAt": "2025-08-13T08:48:33.478Z",
+    "__v": 0
+  },
+  {
+    "_id": "689c592a895559f80446779e",
+    "name": "Jay",
+    "age": 28,
+    "course": "LLB",
+    "createdAt": "2025-08-13T09:21:46.808Z",
+    "updatedAt": "2025-08-13T09:21:46.808Z",
+    "__v": 0
+  }
+]

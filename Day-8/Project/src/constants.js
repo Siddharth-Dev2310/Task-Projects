@@ -1,0 +1,1 @@
+export const DB_NAME = "STUDENT_RECORD_MANANGER"

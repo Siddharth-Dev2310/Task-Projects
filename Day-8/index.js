@@ -29,6 +29,7 @@ async function getData() {
 
     console.log("City: ",city);
     
+    console.log("Description:", json.weather[0].description);
     // console.log("Temp:");
     for (const key in json.main) {
       if (Object.prototype.hasOwnProperty.call(json.main, key)) {
@@ -37,6 +38,8 @@ async function getData() {
         
       }
     }
+
+    
   } catch (error) {
     console.error("Error fetching data:", error.message);
   }

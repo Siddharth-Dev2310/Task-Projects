@@ -1,6 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 
-const citySchema = Schema(
+const citySchema = new Schema(
     {
         name : {
             type : String,
@@ -10,9 +10,12 @@ const citySchema = Schema(
 
         state : {
             type: Schema.Types.ObjectId,
-            ref : true,
+            ref : "State",
             require : true
         }
+    },
+    {
+        timestamps : true
     }
 )
 

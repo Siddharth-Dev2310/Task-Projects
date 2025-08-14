@@ -14,4 +14,8 @@ app.use(express.static("public"))
 
 //rotues
 
+import userRouter from "./routes/user.routes.js"
+
+app.use("/api/v1/student", userRouter)
+
 export {app}

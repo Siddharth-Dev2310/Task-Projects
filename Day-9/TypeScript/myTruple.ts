@@ -13,6 +13,6 @@ const newUser : User = [114, "Siddharth@gmail.com"]
 
 newUser[1] = "SolankiSiddharth@Gmail.com";
 
-newUser.push(3); //? If We can pass The FAlse Given The Error Becuese We Can Not Add THe User Type add The Boolean Data Type So Given the Error
+// newUser.push(3); //? If We can pass The FAlse Given The Error Becuese We Can Not Add THe User Type add The Boolean Data Type So Given the Error
 
 console.log(newUser)

@@ -4,6 +4,7 @@ import { asyncHendler } from "../utils/asyncHendler.js";
 import { User, City, Country, State, Course } from "../models/export.model.js";
 import { fileUplodeOnMongoDBValidation } from "../validation/user.validation.js";
 import csv from "csvtojson";
+import { toLowerCase } from "zod";
 
 const createStudent = asyncHendler(async (req, res) => {
   //!: collect The Data Form The Student like {Name, Email, Phone, Country, State, City, Course} -> req.Body
@@ -37,7 +38,7 @@ const createStudent = asyncHendler(async (req, res) => {
   let courseIds = [];
   if (Array.isArray(course)) {
     courseIds = await Promise.all(
-      course.map(async (coursename) => {
+      course.Map(async (coursename) => {
         let courseDoc = await Course.findOne({
           name: coursename.toLowerCase(),
         });
@@ -97,6 +98,8 @@ const createStudent = asyncHendler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "Student Scussfully Created"));
 });
 
+/*
+
 const fileUplodeOnMongoDB = asyncHendler(async (req, res) => {
   //! : req.body -> File;
   //? : can convte CSV into The extenstion In the JSON
@@ -110,16 +113,7 @@ const fileUplodeOnMongoDB = asyncHendler(async (req, res) => {
   const students = await csv().fromFile(filePath);
 
   for (const student of students) {
-    const result = fileUplodeOnMongoDBValidation.safeParse(student);
-
-    if (!result.success) {
-      throw new ApiError(
-        400,
-        result.error.errors.map((e) => e.message).join(", ")
-      );
-    }
-
-    const { name, email, phone, country, state, city, course } = result.data;
+     const {name, email, phone, country, state, city, course} = student;
 
     if (!phone || phone.trim() === "") {
       continue;
@@ -152,7 +146,7 @@ const fileUplodeOnMongoDB = asyncHendler(async (req, res) => {
     let courseIds = [];
     if (Array.isArray(course)) {
       courseIds = await Promise.all(
-        course.map(async (coursename) => {
+        course.Map(async (coursename) => {
           if (!coursename) return null;
 
           const courseDoc =
@@ -218,5 +212,120 @@ const fileUplodeOnMongoDB = asyncHendler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "All students uploaded successfully"));
 });
+
+*/
+
+const fileUplodeOnMongoDB = asyncHendler( async ( req, res) => {
+  //! : File Path -> Req.Body
+  //? : Convet The File PAth usin The CSv Parser Also The Conver Into THe JSon 
+  //* : Can Sotre The Chaches like The {City, State, Country, courses} Reduces DB Calles
+  //TODO : Make The async Funcation To Check The Exsiting Data Are or Not ? 
+  //! : If The Can Not Have The Data SO Create The Array
+  //? : And All The Students Can Store In To The Student For Loop 
+  //* :  Get the Country, City, State ids using The Set
+  //TODO : And For The CouresIds Can old System Can Use Get The Whole The IDS Can Store In TO Array Using Set 
+  //! : Push The Whole The Data into The Created Array 
+  //* : Store In The mongoDB 
+
+  const filePath = req.file?.path;
+  const students = await csv().fromFile(filePath);
+  
+  const countryCache = new Map();
+  const stateCache = new Map();
+  const cityCache = new Map();  
+  const courseCache = new Map();
+
+  const prelodedData = async () => {
+    const [countries,  states, cities, courses] = await Promise.all(
+      [
+        Country.find({}, "name"),
+        State.find({}, "name"),
+        City.find({}, "name"),
+        Course.find({}, "name")
+      ]
+    );
+
+    countries.forEach(c => countryCache.set(c.name, c._id));
+    states.forEach(st => stateCache.set(st.name, st._id));
+    cities.forEach(ci => cityCache.set(ci.name, ci._id));
+    courses.forEach(co => courseCache.set(co.name, co._id));
+  }
+
+  await prelodedData();
+
+  let bulkOps = [];
+
+  for(let student of students){
+    let {name, email, phone, country, state, city, course} = student;
+    if (!phone?.trim()) continue;
+
+    let countryId = countryCache.get(country?.toLowerCase());
+    if(!countryId){
+      const doc = await Country.create({name : country?.toLowerCase()})
+      countryId = doc?._id;
+      countryCache.set(country?.toLowerCase(), countryId);
+    }
+
+    let stateId = stateCache.get(state?.toLowerCase());
+    if(!stateId){
+      const doc = await State.create({name : state?.toLowerCase()})
+      stateId = doc?._id;
+      stateCache.set(state?.toLowerCase(), stateId);
+    }
+
+    let cityId = cityCache.get(city?.toLowerCase());
+    if(!cityId){
+      const doc = await City.create({name : city?.toLowerCase()})
+      cityId = doc?._id;
+      cityCache.set(city?.toLowerCase(), cityId);
+    }
+
+    let courseIds = [];
+    const courseArr = Array.isArray(course) ? course : [course];
+
+    for(let coursename of courseArr ){
+
+      if(!coursename) continue;
+      const lowerName = coursename.toLowerCase();
+
+      let courseId = courseCache.get(lowerName);
+
+      if(!courseId){
+        const doc = await Course.create({name : lowerName});
+        courseId = doc?._id;
+        courseCache.set(lowerName, courseId);
+      }
+      
+      courseIds.push(courseId);
+    }
+
+    bulkOps.push({
+      updateOne: {
+        filter : {phone},
+        update : {
+          $set : {
+            name : name?.toLowerCase(),
+            email : email?.toLowerCase(),
+            country : countryId,
+            state : stateId,
+            city : cityId
+          },
+          $addToSet : { course : { $each : courseIds } }
+        },
+        upsert : true
+      }
+    })
+  }
+
+  if(bulkOps.length > 0){
+    await User.bulkWrite(bulkOps)
+  }
+
+   return res
+    .status(200)
+    .json(
+      new ApiResponse(200, {}, "All students uploaded successfully")
+    );
+}) 
 
 export { createStudent, fileUplodeOnMongoDB };

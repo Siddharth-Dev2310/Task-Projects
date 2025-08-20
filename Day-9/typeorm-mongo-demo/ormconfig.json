@@ -1,0 +1,8 @@
+{
+  "type": "mongodb",
+  "url": "mongodb+srv://mrsiddharthsolanki:Sid4Art%40059@reactapp1.psgd72b.mongodb.net",
+  "synchronize": true,
+  "logging": true,
+  "entities": ["src/entity/*.js"]
+}
+

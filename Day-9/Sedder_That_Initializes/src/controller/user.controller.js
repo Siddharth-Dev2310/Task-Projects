@@ -131,14 +131,12 @@ const sedderSuperAdminCreated = asyncHendler( async (req, res) => {
         const roleObjId = await Role.create({
             name: "SUPER_ADMIN", modules: moduleIds
         })
-        
-        const password = "Super@123";
 
         const createSA = await User.create({
-            fullname : "Super Admin",
-            username : "superadmin",
-            email : "superadmin@example.com",
-            password : password,
+            fullname : process.env.SUPER_ADMIN_FULLNAME,
+            username : process.env.SUPER_ADMIN_USERNAME,
+            email : process.env.SUPER_ADMIN_EMAIL,
+            password : process.env.SUPER_ADMIN_PASSWORD,
             role : roleObjId._id
         })
 

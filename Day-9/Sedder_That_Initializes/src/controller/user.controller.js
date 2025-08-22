@@ -2,6 +2,7 @@ import { asyncHendler } from "../utils/asyncHendler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.models.js";
+import { validateUserInput, validateSuperAdminExists, validateUserNotExists } from "../validation/user.validation.js";
 import {Role} from "../models/role.models.js"
 import {Modules} from "../models/modules.models.js"
 
@@ -11,6 +12,9 @@ const generateAccessAndRefereshTokens = async(userID) => {
     try {
         const user = await User.findById(userID);
         const accessToken = user.generateAccessToken()
+
+        console.log("accessToken: " , accessToken);
+
         const refreshToken = user.generateRefreshToken()
 
         user.refreshToken = refreshToken
@@ -57,20 +61,24 @@ const createUser = asyncHendler( async (req, res) => {
     //? : Return The Object Of the User
     
     const {fullname,username,email, password, role} = req.body;
-
-    const superAdminExists = await User.findOne({ username: "superadmin" });
-    if (!superAdminExists) {
-        throw new ApiError(400, "Super Admin must be created first. Please run the seeder endpoint.");
+    
+    try {
+        await validateSuperAdminExists(User);
+        validateUserInput({ fullname, username, email, password, role });
+        await validateUserNotExists(User, username);
+    } catch (err) {
+        throw new ApiError(400, err.message);
     }
 
-    if([fullname, username, email, password, role].some( (fileds) =>  fileds?.trim() === '')){
-        throw new ApiError(400, "All Fileds Requied")
-    }
-
-    const exstingUser = await User.findOne({username : username.toLowerCase()});
-
-    if(exstingUser){
-        throw new ApiError(400, "User Aleady Exsting!")
+    if (["DOCTOR", "PATIENT"].includes(role?.toUpperCase())) {
+        if (!req.user || !req.user.role) {
+            throw new ApiError(403, "Authentication required to create DOCTOR or PATIENT users.");
+        }
+        
+        const userRoleDoc = await Role.findById(req.user.role);
+        if (!userRoleDoc || !["ADMIN", "SUPER_ADMIN"].includes(userRoleDoc.name)) {
+            throw new ApiError(403, "Only ADMIN or SUPER_ADMIN can create DOCTOR or PATIENT users.");
+        }
     }
 
     const moduleIds = await givenmodules(role.toUpperCase())
@@ -120,7 +128,6 @@ const sedderSuperAdminCreated = asyncHendler( async (req, res) => {
 
     const superAdmin = await User.find();
     console.log("superAdmin:", superAdmin);
-    
     if( superAdmin.length == 0 ){
 
         const modulesArr = ["User Management", "Patient Records", "Appointments", "Reports & Analytics"]
@@ -203,9 +210,10 @@ const loginUser = asyncHendler(async (req, res) => {
     
     const {username,email, password} = req.body;
 
-    const superAdminExists = await User.findOne({ username: "superadmin" });
-    if (!superAdminExists) {
-        throw new ApiError(400, "Super Admin must be created first. Please run the seeder endpoint.");
+    try {
+        await validateSuperAdminExists(User);
+    } catch (err) {
+        throw new ApiError(400, err.message);
     }
 
     if(!username && !email){

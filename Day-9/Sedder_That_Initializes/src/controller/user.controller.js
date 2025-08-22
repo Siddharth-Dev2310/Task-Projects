@@ -300,4 +300,32 @@ const loginUser = asyncHendler(async (req, res) => {
     )  
 })
 
-export {createUser, sedderSuperAdminCreated, loginUser}
+const updateUserDetails = asyncHendler(async (req, res) => {
+    //! : Collect The Values Form The Req.body
+    //? : and Find By Id and Update the VAlues
+    //! : Use THe Middleware THe Find THe USer 
+    //? : Return The User Updated Details
+
+    const {fullname, email, username} = req.body;
+
+    if(!fullname || !email || !username) {
+        throw new ApiError(400, "Fullname, Email and Username Are Requied")
+    }
+
+    const updeteduser = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set : {
+                fullname : fullname.toLowerCase(),
+                email : email.toLowerCase(),
+                username : username.toLowerCase(),
+            }
+        }, { new :  true}
+    ).select("-password")
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, updeteduser, "Account details updated successfully"))
+})
+
+export {createUser, sedderSuperAdminCreated, loginUser, updateUserDetails}

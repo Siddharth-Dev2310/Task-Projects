@@ -7,9 +7,10 @@ import { ProductController } from './product/product.controller';
 import { EmploeyeeController } from './emploeyee/emploeyee.controller';
 import { EmploeyeeModule } from './emploeyee/emploeyee.module';
 import { StudentModule } from './student/student.module';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
-  imports: [EmploeyeeModule, StudentModule],
+  imports: [EmploeyeeModule, StudentModule, CustomersModule],
   controllers: [
     AppController,
     UserController,

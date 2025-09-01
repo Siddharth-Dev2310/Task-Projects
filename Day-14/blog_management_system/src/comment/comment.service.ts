@@ -84,8 +84,8 @@ export class CommentService {
       await this.commentRepo.save(comment);
       return new ApiResponse(
         200,
-        { deleted: true, message: 'Comment soft deleted successfully' },
-        'Comment soft deleted',
+        { deleted: true, message: 'Comment deleted successfully' },
+        'Comment deleted',
       );
     } catch (error) {
       if (error instanceof ApiError) {

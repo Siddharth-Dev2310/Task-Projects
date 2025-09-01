@@ -21,6 +21,7 @@ import { ApiResponse } from 'src/utils/ApiResponse.utils';
 import { JwtAuthGuard } from 'src/guard/auth/auth.guard';
 import { RolesGuard } from 'src/guard/roles/roles.guard';
 import { Roles } from 'src/guard/roles/roles.decorator';
+import { LoginDto } from './DTO/login.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth() // Enable JWT "Authorize" button globally for this controller
@@ -43,7 +44,7 @@ export class UserController {
           id: 1,
           name: 'Siddharth',
           email: 'sid@example.com',
-          role: 'User',
+          role: 'Author',
         },
       },
     },
@@ -78,14 +79,14 @@ export class UserController {
             id: 1,
             name: 'Siddharth',
             email: 'sid@example.com',
-            role: 'User',
+            role: 'Author',
           },
         },
       },
     },
   })
   async login(
-    @Body() body: { email: string; password: string },
+    @Body() body: LoginDto,
   ): Promise<ApiResponse<UserClassDto> | null> {
     return this.userService.loginUser(body);
   }
@@ -151,8 +152,8 @@ export class UserController {
             },
             {
               id: 2,
-              name: 'Palak',
-              email: 'palak@example.com',
+              name: 'User2',
+              email: 'user2@example.com',
               role: 'Author',
             },
           ],

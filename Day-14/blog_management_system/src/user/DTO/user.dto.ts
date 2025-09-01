@@ -8,12 +8,12 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserInterface } from '../interfaces/user.interfaces';
-import { Post } from 'src/post/Entites/post.entites';
+// import { Post } from 'src/post/Entites/post.entites';
 
 export class UserClassDto implements Partial<UserInterface> {
   @ApiProperty({
     description: 'Full name of the user',
-    example: 'Siddharth Solanki',
+    example: 'Siddhart Solanki',
   })
   @IsNotEmpty({ message: 'Name is required' })
   name: string;

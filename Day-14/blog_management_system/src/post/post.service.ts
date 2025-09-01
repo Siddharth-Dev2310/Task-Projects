@@ -217,7 +217,7 @@ export class PostService {
 
       return new ApiResponse(
         200,
-        { deleted: true, message: 'Post soft deleted successfully' },
+        { deleted: true, message: 'Post deleted successfully' },
         'Post soft deleted',
       );
     } catch (error) {

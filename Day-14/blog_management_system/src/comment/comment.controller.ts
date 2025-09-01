@@ -11,6 +11,7 @@ import {
   ApiOperation,
   ApiBearerAuth,
   ApiResponse as SwaggerApiResponse,
+  ApiBody,
 } from '@nestjs/swagger';
 import { CommentService } from './comment.service';
 import { CommentDto } from './DTO/comment.dto';
@@ -29,10 +30,35 @@ export class CommentController {
   @Post(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('reader', 'author')
-  @ApiOperation({ summary: 'Create a comment (reader/author)' })
+  @ApiOperation({ summary: 'Create a comment on a post (reader/author)' })
+  @ApiBody({
+    type: CommentDto,
+    description: 'Comment payload',
+    examples: {
+      example1: {
+        summary: 'Basic Comment',
+        value: {
+          content: 'This is a great post!',
+        },
+      },
+    },
+  })
   @SwaggerApiResponse({
     status: 201,
     description: 'Comment created successfully.',
+    schema: {
+      example: {
+        success: true,
+        message: 'Comment created successfully',
+        data: {
+          id: 1,
+          content: 'This is a great post!',
+          postId: 5,
+          userId: 10,
+          createdAt: '2025-09-01T10:30:00.000Z',
+        },
+      },
+    },
   })
   async createComment(
     @Param('id') id: number,
@@ -46,7 +72,20 @@ export class CommentController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('author', 'admin')
   @ApiOperation({ summary: 'Soft delete a comment (author/admin)' })
-  @SwaggerApiResponse({ status: 200, description: 'Comment soft deleted.' })
+  @SwaggerApiResponse({
+    status: 200,
+    description: 'Comment soft deleted.',
+    schema: {
+      example: {
+        success: true,
+        message: 'Comment soft deleted',
+        data: {
+          deleted: true,
+          message: 'Comment with id 1 has been deleted',
+        },
+      },
+    },
+  })
   async deleteComment(@Param('id') id: number): Promise<ApiResponse<{}>> {
     return this.commentService.deleteComment(id);
   }

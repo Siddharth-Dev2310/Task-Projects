@@ -1,0 +1,1 @@
+export const DB_NAME = "TASK_MANGEMENT_SYSTEM"
